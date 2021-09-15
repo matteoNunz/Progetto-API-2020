@@ -9,7 +9,6 @@
 #define DIM_INIZIALE 10
 #define DIM_PILA_INIZIALE 500000
 
-//questo è il finale
 
 int max_dim_mem = DIM_INIZIALE;
 int massimo_indirizzo = 0;
@@ -140,8 +139,6 @@ void StampaRiga(int ind1, int ind2)
 
 Txt* CercaOInserisci(char testo_riga[MAXDIM])
 {
-  //printf("Sono in cerca o inserisci\n");
-
   Txt *punt,*prima = NULL;
   int lunghezza_stringa = strlen(testo_riga);
   Txt *nuovo = NULL;
@@ -150,33 +147,25 @@ Txt* CercaOInserisci(char testo_riga[MAXDIM])
 
   while(punt != NULL && strcmp(punt->testo,testo_riga) != 0)
   {
-    //printf("Sono nel while\n");
     prima = punt;
     punt = punt->prossimo;
   }
   if(punt == NULL)
   {
-    //printf("Caso non c'e'\n");
     nuovo = (Txt*) malloc(sizeof(Txt));
     strcpy(nuovo->testo, testo_riga);
-    //printf("Qui1\n");
     if(prima != NULL)
     {
-      //printf("qui2\n");
       prima->prossimo = nuovo;
     }
     else
     {
-      //printf("Nell'else\n");
       memoria_testo[lunghezza_stringa - 1] = nuovo;
     }
-    //printf("Finito cerca o inserisci\n");
     return nuovo;
   }
   else if(strcmp(punt->testo,testo_riga) == 0)
   {
-    //printf("Caso c'e'\n");
-    //printf("Finito cerca o inserisci\n");
     return punt;
   }
 }
@@ -187,25 +176,18 @@ void InserisciInMemoria(char stringa[MAXDIM],int riga)
   {
     while(max_dim_mem <= riga)
     {
-      //printf("Devo reallocare la memoria\n");
       M = realloc(M, 5 * max_dim_mem * sizeof(Elemento));
       max_dim_mem = 5 * max_dim_mem;
-      //printf("Memoria reallocata\n");
     }
   }
-  /*if(M[riga].punt_testo != NULL && da_inserire == true)
-  {
-    InserisciInLista(M[riga].punt_testo, riga);
-  }*/
   M[riga].punt_testo = CercaOInserisci(stringa);
   return;
 }
 
-void Push()//char comando, int ind1, int ind2, char stringa[MAXDIM]
+void Push()
 {
   int j;
-  //printf("Sono nella push\n");
-  //printf("Testa pila e': %d\n",testa_pila);
+  
   if(testa_pila >= dim_pila)
   {
     pila = realloc(pila, 2 * dim_pila * sizeof(Pila));
@@ -220,14 +202,12 @@ void Push()//char comando, int ind1, int ind2, char stringa[MAXDIM]
     (pila[testa_pila].D)[j].punt_testo = M[j].punt_testo;
   }
   return;
-  //}
 }
 
 void Delete(int ind1, int ind2)
 {
   int j,i = 0;
-  //printf("Sono nella delete\n");
-  //printf("Massimo indirizzo: %d\n",massimo_indirizzo);
+
   if(ind1 <= massimo_indirizzo && ind2 >= massimo_indirizzo)
   {
     ind2 = massimo_indirizzo;
@@ -248,8 +228,6 @@ void Delete(int ind1, int ind2)
   {
     for(j = ind2 + 1; j <= massimo_indirizzo; j++)
     {
-      //printf("Sono nel primo for\n");
-      //printf("Sposto la posizione %d in %d\n",j,(ind1+i));
       M[ind1 + i] = M[j];
       i++;
     }
@@ -258,10 +236,8 @@ void Delete(int ind1, int ind2)
 
     for(j = max_dim_mem; j > massimo_indirizzo; j--)
     {
-      //printf("Sono nel secondo for\n");
       M[j].punt_testo = NULL;
     }
-    //printf("Massimo indirizzo: %d\n",massimo_indirizzo);
     return;
   }
 }
@@ -364,27 +340,22 @@ bool LeggiComando()
       {
         num_istruzione++;
 
-        //printf("Comando di prima: %c\n",comando);
-
         if(comando == 'u' || comando == 'r')
         {
-            //testa_pila = pos_in_pila + 1;
             for(i = pos_in_pila + 1; i < testa_pila; i++)
             {
               free(pila[i].D);
               pila[i].dim_memoria = 0;
             }
             testa_pila = pos_in_pila + 1;
-            //printf("testa pila ridotta: %d\n",testa_pila);
         }
         comando = 'c';
 
         if(ind2 > massimo_indirizzo)//tengo in memoria il massimo indirizzo inserito
           massimo_indirizzo = ind2;
-        //fgets(stringa,MAXDIM,stdin);
         gets(stringa);
         i = 0;
-        while((i < (ind2 - ind1 + 1)))//(stringa[0] != '.') && (stringa[1] != '\n') &&
+        while((i < (ind2 - ind1 + 1)))
         {
           InserisciInMemoria(stringa,ind1+i);
           gets(stringa);
@@ -392,7 +363,7 @@ bool LeggiComando()
         }
         if(massimo_indirizzo < 25000)
         {
-          Push();//comando,ind1,ind2,stringa
+          Push();
           pos_in_pila = testa_pila;
           testa_pila++;
         }
@@ -401,7 +372,6 @@ bool LeggiComando()
       {
         if(comando == 'u' || comando == 'r')
         {
-            //testa_pila = pos_in_pila + 1;
             for(i = pos_in_pila + 1; i < testa_pila; i++)
             {
               free(pila[i].D);
@@ -411,22 +381,16 @@ bool LeggiComando()
         }
 
         comando = 'd';
-        //Push(comando, ind1, ind2 , stringa);
         Delete(ind1, ind2);
-        Push();//comando, ind1, ind2, stringa
+        Push();
         pos_in_pila = testa_pila;
         testa_pila++;
       }
       else
       {
-        //printf("Devo stampare\n");
         StampaRiga(ind1,ind2);
       }
     }
-    /*printf("Num UR: %d\n",num_UR);
-    printf("Pos in pila: %d\n",pos_in_pila);
-    printf("Testa pila: %d\n",testa_pila);
-    printf("Massimo indirizzo: %d\n",massimo_indirizzo);*/
   }
   return false;
 }
